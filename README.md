@@ -1,4 +1,4 @@
-#Intro
+# Intro
 
 The indispensable IRC survival tool against the preying staffers.  In many
 cases, such staffers are not even ops.  So simply looking for people with "@"
@@ -11,7 +11,7 @@ preys lurking in the background in the current buffer, as well as letting you
 list them in the buffer.
 
 
-#Usage
+# Usage
 
 * `/owl` in a channel to list preys.
 * `/set owl` to configure more stuff.
