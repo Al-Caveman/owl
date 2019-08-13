@@ -1,8 +1,8 @@
 # Intro
 
-The indispensable IRC survival tool against the preying staffers.  In many
-cases, such staffers are not even ops.  So simply looking for people with "@"
-prefixes will mislead you.
+The indispensable [weechat](https://weechat.org) survival tool against the
+preying staffers.  In many cases, such staffers are not even ops.  So simply
+looking for people with "@" prefixes will mislead you.
 
 > _"The silent dog is more dangerous than the barking one."_ -- caveman, 2019
 
