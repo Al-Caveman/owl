@@ -55,9 +55,12 @@ SCRIPT_DESC = 'Warns you of silent dogs, such as preying network staffers.'
 SCRIPT_COMMAND = 'owl'
 
 DEBUG = True
+DIR_IN = 0
+DIR_OUT = 1
 
 import_ok = True
 import re
+import sys
 try:
     import weechat
 except ImportError:
@@ -71,50 +74,50 @@ owl_settings_default = {
         '.*!~.*@.*staff.*',
         'python regular expression to match on hostnames for rule 1.'),
     'rule_1_action_on': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_1_match is matched in a user.'),
     'rule_1_action_off': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_1_match is no longer matched in a user.'),
 
     'rule_2_match': (
         '.*!~.*@.*staff.*',
         'python regular expression to match on hostnames for rule 2.'),
     'rule_2_action_on': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_2_match is matched in a user.'),
     'rule_2_action_off': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_2_match is no longer matched in a user.'),
 
     'rule_3_match': (
         '.*!~.*@.*staff.*',
         'python regular expression to match on hostnames for rule 3.'),
     'rule_3_action_on': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_3_match is matched in a user.'),
     'rule_3_action_off': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_3_match is no longer matched in a user.'),
 
     'rule_4_match': (
         '.*!~.*@.*staff.*',
         'python regular expression to match on hostnames for rule 4.'),
     'rule_4_action_on': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_4_match is matched in a user.'),
     'rule_4_action_off': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_4_match is no longer matched in a user.'),
 
     'rule_5_match': (
         '.*!~.*@.*staff.*',
         'python regular expression to match on hostnames for rule 5.'),
     'rule_5_action_on': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_5_match is matched in a user.'),
     'rule_5_action_off': (
-        '/someCommand {SERVER} {CHANNEL} {NICK}...',
+        '/someCommand...',
         'some command to execute when rule_5_match is no longer matched in a user.'),
 
     'channels_on': (
@@ -135,6 +138,7 @@ owl_settings_default = {
 owl_settings = {}
 owl_state = {
     'nick_buffs' : {},
+    'buff_alerts' : {},
 }
 owl_on_servers = set()
 owl_on_channels = set()
@@ -144,8 +148,8 @@ owl_match = {}
 
 def optimize_configs():
     global owl_default_on
-    for i in range(1, 5+1):
-        owl_match[i] = re.escape(owl_settings['rule_{}_match'.format(i)])
+    for rule in range(1, 5+1):
+        owl_match[rule] = re.compile(owl_settings['rule_{}_match'.format(i)])
     if owl_settings['channels_default'] == 'on':
         owl_default_on = True
     for i in owl_settings['channels_off'].split(','):
@@ -154,8 +158,30 @@ def optimize_configs():
         owl_on_channels.add(i)
         owl_on_servers.add(i.split('.')[0])
 
-def owl_analyze(nick, host):
-    pass
+def owl_analyze(nick_name, nick_host, buff_name, direction):
+    for rule in sorted(owl_match):
+        if owl_match[rule].match('{}!{}'.format(nick_name, nick_host)):
+            if direction == DIR_IN:
+                if buff_name in owl_state['buff_alerts']:
+                    owl_state['buff_alerts'][buff_name] += 1
+                else:
+                    owl_state['buff_alerts'] = {buff_name : 1}
+                if owl_state['buff_alerts'][buff_name] == 0:
+                    owl_action_on(rule, buff_name)
+            elif direction == DIR_OUT:
+                owl_state['buff_alerts'][buff_name] -= 1
+                if owl_state['buff_alerts'][buff_name] == 0:
+                    del owl_state['buff_alerts'][buff_name]
+                    owl_action_off(rule, buff_name)
+            else:
+                weechat.prnt('',
+                    'error code:  0xDEADBEEF.  '
+                    'this is indeed a very strange error.  '
+                    'developer couldn\'t even fathom that this might happen.  '
+                    'but apparently he was wrong, as you can attest.  '
+                    'plz submit an issue in https://github.com/al-caveman/owl.'
+                )
+                sys.exit(1)
 
 def owl_userhost_cb(a,b,c):
     if DEBUG:
@@ -186,18 +212,19 @@ def owl_init():
                 nick_ptr = weechat.infolist_pointer(iln, 'pointer')
                 nick_name = weechat.infolist_string(iln, 'name')
                 nick_host = weechat.infolist_string(iln, 'host')
-                # track nick-buffer relationship
-                if buff_server in owl_state['nick_buffs']:
-                    if nick_name in owl_state['nick_buffs'][buff_server]:
-                        owl_state['nick_buffs'][buff_server][nick_name].append(buff_name)
-                    else:
-                        owl_state['nick_buffs'][buff_server][nick_name] = [buff_name]
-                else:
-                    owl_state['nick_buffs'][buff_server] = {
-                        nick_name : [buff_name]
-                    }
                 # should we use /userhost to get hostname?
                 if len(nick_host) == 0:
+                    # track nick-buffer relationship
+                    if buff_server in owl_state['nick_buffs']:
+                        if nick_name in owl_state['nick_buffs'][buff_server]:
+                            owl_state['nick_buffs'][buff_server][nick_name].append(buff_name)
+                        else:
+                            owl_state['nick_buffs'][buff_server][nick_name] = [buff_name]
+                    else:
+                        owl_state['nick_buffs'][buff_server] = {
+                            nick_name : [buff_name]
+                        }
+                    # do hookie things
                     weechat.hook_hsignal_send(
                         'irc_redirect_command',
                         {
@@ -215,7 +242,7 @@ def owl_init():
                     )
                     nick_host = '****PENDING****'
                 else:
-                    owl_analyze(nick_name, nick_host)
+                    owl_analyze(nick_name, nick_host, buff_name, DIR_IN)
                 if DEBUG:
                     weechat.prnt( '', '  {}!{}\n'.format(nick_name,nick_host))
             weechat.infolist_free(iln)
