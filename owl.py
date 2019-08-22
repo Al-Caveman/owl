@@ -73,6 +73,18 @@ owl_settings_default = {
     'rule_1_match': (
         '.*!~.*@.*staff.*',
         'python regular expression to match on hostnames for rule 1.'),
+    'rule_1_input_bg_on': (
+        'default',
+        'background color of input bar when owl spotted stuff in the buffer.'),
+    'rule_1_input_bg_off': (
+        'default',
+        'background color of input bar when owl spots nothing there in the buffer.'),
+    'rule_1_input_fg_on': (
+        'default',
+        'foreground color of input bar when owl spotted stuff in the buffer.'),
+    'rule_1_input_fg_off': (
+        'default',
+        'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_1_action_on': (
         '/someCommand...',
         'some command to execute when rule_1_match is matched in a user.'),
@@ -81,8 +93,20 @@ owl_settings_default = {
         'some command to execute when rule_1_match is no longer matched in a user.'),
 
     'rule_2_match': (
-        '.*!~.*@.*staff.*',
-        'python regular expression to match on hostnames for rule 2.'),
+        '',
+        'python regular expression to match on hostnames for rule 1.'),
+    'rule_2_input_bg_on': (
+        'default',
+        'background color of input bar when owl spotted stuff in the buffer.'),
+    'rule_2_input_bg_off': (
+        'default',
+        'background color of input bar when owl spots nothing there in the buffer.'),
+    'rule_2_input_fg_on': (
+        'default',
+        'foreground color of input bar when owl spotted stuff in the buffer.'),
+    'rule_2_input_fg_off': (
+        'default',
+        'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_2_action_on': (
         '/someCommand...',
         'some command to execute when rule_2_match is matched in a user.'),
@@ -91,8 +115,20 @@ owl_settings_default = {
         'some command to execute when rule_2_match is no longer matched in a user.'),
 
     'rule_3_match': (
-        '.*!~.*@.*staff.*',
-        'python regular expression to match on hostnames for rule 3.'),
+        '',
+        'python regular expression to match on hostnames for rule 1.'),
+    'rule_3_input_bg_on': (
+        'default',
+        'background color of input bar when owl spotted stuff in the buffer.'),
+    'rule_3_input_bg_off': (
+        'default',
+        'background color of input bar when owl spots nothing there in the buffer.'),
+    'rule_3_input_fg_on': (
+        'default',
+        'foreground color of input bar when owl spotted stuff in the buffer.'),
+    'rule_3_input_fg_off': (
+        'default',
+        'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_3_action_on': (
         '/someCommand...',
         'some command to execute when rule_3_match is matched in a user.'),
@@ -101,8 +137,20 @@ owl_settings_default = {
         'some command to execute when rule_3_match is no longer matched in a user.'),
 
     'rule_4_match': (
-        '.*!~.*@.*staff.*',
-        'python regular expression to match on hostnames for rule 4.'),
+        '',
+        'python regular expression to match on hostnames for rule 1.'),
+    'rule_4_input_bg_on': (
+        'default',
+        'background color of input bar when owl spotted stuff in the buffer.'),
+    'rule_4_input_bg_off': (
+        'default',
+        'background color of input bar when owl spots nothing there in the buffer.'),
+    'rule_4_input_fg_on': (
+        'default',
+        'foreground color of input bar when owl spotted stuff in the buffer.'),
+    'rule_4_input_fg_off': (
+        'default',
+        'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_4_action_on': (
         '/someCommand...',
         'some command to execute when rule_4_match is matched in a user.'),
@@ -111,8 +159,20 @@ owl_settings_default = {
         'some command to execute when rule_4_match is no longer matched in a user.'),
 
     'rule_5_match': (
-        '.*!~.*@.*staff.*',
-        'python regular expression to match on hostnames for rule 5.'),
+        '',
+        'python regular expression to match on hostnames for rule 1.'),
+    'rule_5_input_bg_on': (
+        'default',
+        'background color of input bar when owl spotted stuff in the buffer.'),
+    'rule_5_input_bg_off': (
+        'default',
+        'background color of input bar when owl spots nothing there in the buffer.'),
+    'rule_5_input_fg_on': (
+        'default',
+        'foreground color of input bar when owl spotted stuff in the buffer.'),
+    'rule_5_input_fg_off': (
+        'default',
+        'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_5_action_on': (
         '/someCommand...',
         'some command to execute when rule_5_match is matched in a user.'),
