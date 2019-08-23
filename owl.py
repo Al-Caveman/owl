@@ -190,6 +190,12 @@ owl_settings_default = {
     'channels_default': (
         'on',
         'whether owl is active by default, unless overwritten by channels_on or channels_off.  either "on" or "off".'),
+    'input_bg_default': (
+        'default',
+        'default background colour for input line when no owl alert is there.'),
+    'input_fg_default': (
+        'default',
+        'default foreground colour for input line when no owl alert is there.'),
     'userhost_timeout': (
         '300',
         'how long to wait to get userhost responses from server.'),
@@ -228,14 +234,26 @@ def optimize_configs():
         owl_on_channels.add(i)
         owl_on_servers.add(i.split('.')[0])
 
-def owl_buff_switch(a,b,c):
+def owl_rest_input():
+    pass
+
+def owl_buff_switch(a,b,buff_cur_ptr):
     # get current buffer's name
-    buff_cur_ptr = c
     buff_cur_name = weechat.buffer_get_string(buff_cur_ptr, 'name')
     if DEBUG:
-        weechat.prnt('', 'buff switch   : {}-{}-{}'.format(a,b,c))
         weechat.prnt('', 'buff switch to: {}'.format(buff_cur_name))
+    # apply current buffers' settings
+    owl_reset_input()
+    if buff_cur_name in owl_state['buff_alerts']:
+        for rule in owl_state['buff_alerts'][buff_cur_name]:
+            owl_line_on(rule)
     return weechat.WEECHAT_RC_OK
+
+def owl_line_on(rule):
+    pass
+
+def owl_line_off(rule):
+    pass
 
 def owl_action_on(rule):
     pass
