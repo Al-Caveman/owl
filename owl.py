@@ -57,6 +57,7 @@ SCRIPT_COMMAND = 'owl'
 DEBUG = True
 DIR_IN = 0
 DIR_OUT = 1
+RULES = 5
 
 import_ok = True
 import re
@@ -205,11 +206,20 @@ owl_on_channels = set()
 owl_off_channels = set()
 owl_default_on = False
 owl_match = {}
+owl_action = {}
 
 def optimize_configs():
     global owl_default_on
-    for rule in range(1, 5+1):
-        owl_match[rule] = re.compile(owl_settings['rule_{}_match'.format(i)])
+    for rule in range(1, RULES+1):
+        owl_match[rule] = re.compile(owl_settings['rule_{}_match'.format(rule)])
+        owl_action[rule] = {
+            'rule_input_bg_on'  : 'rule_{}_input_bg_on'.format(rule)
+            'rule_input_bg_off' : 'rule_{}_input_bg_off'.format(rule)
+            'rule_input_fg_on'  : 'rule_{}_input_fg_on'.format(rule)
+            'rule_input_fg_off' : 'rule_{}_input_fg_off'.format(rule)
+            'rule_action_on'    : 'rule_{}_action_on'.format(rule)
+            'rule_action_off'   : 'rule_{}_action_off'.format(rule)
+        }
     if owl_settings['channels_default'] == 'on':
         owl_default_on = True
     for i in owl_settings['channels_off'].split(','):
@@ -217,6 +227,19 @@ def optimize_configs():
     for i in owl_settings['channels_on'].split(','):
         owl_on_channels.add(i)
         owl_on_servers.add(i.split('.')[0])
+
+def owl_buff_switch():
+    owl_action_on(rule)
+
+def owl_action_on(rule):
+    # get current buffer's name
+    buff_name_cur = weechat.buffer_get_string('', 'localvar_server')
+    weechat.prnt('', 'buff on: {}'.format(buff_name_cur))
+
+def owl_action_off(rule):
+    # get current buffer's name
+    buff_name_cur = weechat.buffer_get_string('', 'localvar_server')
+    weechat.prnt('', 'buff off: {}'.format(buff_name_cur))
 
 def owl_analyze(nick_name, nick_host, buff_name, direction):
     for rule in sorted(owl_match):
@@ -227,12 +250,12 @@ def owl_analyze(nick_name, nick_host, buff_name, direction):
                 else:
                     owl_state['buff_alerts'] = {buff_name : 1}
                 if owl_state['buff_alerts'][buff_name] == 0:
-                    owl_action_on(rule, buff_name)
+                    owl_action_on(rule)
             elif direction == DIR_OUT:
                 owl_state['buff_alerts'][buff_name] -= 1
                 if owl_state['buff_alerts'][buff_name] == 0:
                     del owl_state['buff_alerts'][buff_name]
-                    owl_action_off(rule, buff_name)
+                    owl_action_off(rule)
             else:
                 weechat.prnt('',
                     'error code:  0xDEADBEEF.  '
@@ -326,6 +349,10 @@ if __name__ == '__main__' and import_ok:
         weechat.hook_hsignal('irc_redirection_owl_userhost', 'owl_userhost_cb', '')
         optimize_configs()
         owl_init()
+
+        # detect current buffer
+        weechat.hook_signal('buffer_switch', 'owl_buff_switch', '')
+
 
         # add command
         weechat.hook_command(
