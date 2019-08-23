@@ -228,7 +228,7 @@ def optimize_configs():
         owl_on_channels.add(i)
         owl_on_servers.add(i.split('.')[0])
 
-def owl_buff_switch():
+def owl_buff_switch(a,b,c):
     owl_action_on(rule)
 
 def owl_action_on(rule):
