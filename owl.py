@@ -234,12 +234,12 @@ def owl_buff_switch(a,b,c):
 
 def owl_action_on(rule):
     # get current buffer's name
-    buff_name_cur = weechat.buffer_get_string('', 'localvar_server')
+    buff_name_cur = weechat.buffer_get_string(None, 'name')
     weechat.prnt('', 'buff on: {}'.format(buff_name_cur))
 
 def owl_action_off(rule):
     # get current buffer's name
-    buff_name_cur = weechat.buffer_get_string('', 'localvar_server')
+    buff_name_cur = weechat.buffer_get_string(None, 'name')
     weechat.prnt('', 'buff off: {}'.format(buff_name_cur))
 
 def owl_analyze(nick_name, nick_host, buff_name, direction):
