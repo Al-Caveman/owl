@@ -205,6 +205,7 @@ owl_settings_default = {
 owl_settings = {}
 owl_state = {
     'nick_buffs' : {},
+    'nick!host_buffs' : {},
     'buff_alerts' : {},
 }
 owl_on_servers = set()
@@ -291,6 +292,17 @@ def owl_userhost_cb(a,b,c):
         weechat.prnt('', 'callback:  {}-{}-{}'.format(a,b,c))
     return weechat.WEECHAT_RC_OK
 
+def owl_add_nickshit_buff_map(d, buff_server, nick_name, buff_name):
+    if buff_server in d:
+        if nick_name in d[buff_server]:
+            d[buff_server][nick_name].append(buff_name)
+        else:
+            d[buff_server][nick_name] = [buff_name]
+    else:
+        d[buff_server] = {
+            nick_name : [buff_name]
+        }
+
 def owl_init():
     # check every buffer
     ilb = weechat.infolist_get('buffer', '', '')
@@ -318,15 +330,12 @@ def owl_init():
                 # should we use /userhost to get hostname?
                 if len(nick_host) == 0:
                     # track nick-buffer relationship
-                    if buff_server in owl_state['nick_buffs']:
-                        if nick_name in owl_state['nick_buffs'][buff_server]:
-                            owl_state['nick_buffs'][buff_server][nick_name].append(buff_name)
-                        else:
-                            owl_state['nick_buffs'][buff_server][nick_name] = [buff_name]
-                    else:
-                        owl_state['nick_buffs'][buff_server] = {
-                            nick_name : [buff_name]
-                        }
+                    owl_add_nickshit_buff_map(
+                            owl_state['nick_buffs'],
+                            buff_server,
+                            nick_name,
+                            buff_name
+                    )
                     # do hookie things
                     weechat.hook_hsignal_send(
                         'irc_redirect_command',
@@ -345,7 +354,12 @@ def owl_init():
                     )
                     nick_host = '****PENDING****'
                 else:
-                    owl_analyze(nick_name, nick_host, buff_name, DIR_IN)
+                    owl_add_nickshit_buff_map(
+                            owl_state['nick!host_buffs'],
+                            buff_server,
+                            '{}!{}\n'.format(nick_name, nick_host),
+                            buff_name
+                    )
                 if DEBUG:
                     weechat.prnt( '', '  {}!{}\n'.format(nick_name,nick_host))
             weechat.infolist_free(iln)
