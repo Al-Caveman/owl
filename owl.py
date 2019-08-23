@@ -234,7 +234,7 @@ def optimize_configs():
         owl_on_channels.add(i)
         owl_on_servers.add(i.split('.')[0])
 
-def owl_rest_input():
+def owl_reset_input():
     pass
 
 def owl_buff_switch(a,b,buff_cur_ptr):
