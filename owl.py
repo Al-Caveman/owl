@@ -233,10 +233,11 @@ def owl_buff_switch(a,b,c):
     buff_cur_ptr = weechat.current_buffer()
     buff_cur_name = weechat.buffer_get_string(buff_cur_ptr, 'name')
     if DEBUG:
+        weechat.prnt('', 'buff switch   : {}-{}-{}'.format(a,b,c))
         weechat.prnt('', 'buff switch to: {}'.format(buff_cur_name))
     return weechat.WEECHAT_RC_OK
 
-def owl_action_on(rule, buff_name):
+def owl_action_on(rule):
     pass
 
 def owl_action_off(rule):
