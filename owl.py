@@ -230,6 +230,7 @@ def optimize_configs():
 
 def owl_buff_switch(a,b,c):
     owl_action_on(1)
+    return weechat.WEECHAT_RC_OK
 
 def owl_action_on(rule):
     # get current buffer's name
