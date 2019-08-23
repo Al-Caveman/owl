@@ -229,7 +229,7 @@ def optimize_configs():
         owl_on_servers.add(i.split('.')[0])
 
 def owl_buff_switch(a,b,c):
-    owl_action_on(rule)
+    owl_action_on(1)
 
 def owl_action_on(rule):
     # get current buffer's name
