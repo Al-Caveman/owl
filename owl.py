@@ -229,20 +229,18 @@ def optimize_configs():
         owl_on_servers.add(i.split('.')[0])
 
 def owl_buff_switch(a,b,c):
-    owl_action_on(1)
+    # get current buffer's name
+    buff_cur_ptr = weechat.current_buffer()
+    buff_cur_name = weechat.buffer_get_string(buff_cur_ptr, 'name')
+    if DEBUG:
+        weechat.prnt('', 'buff switch to: {}'.format(buff_cur_name))
     return weechat.WEECHAT_RC_OK
 
-def owl_action_on(rule):
-    # get current buffer's name
-    buff_cur_ptr = weechat.current_buffer()
-    buff_cur_name = weechat.buffer_get_string(buff_cur_ptr, 'name')
-    weechat.prnt('', 'buff on: {}'.format(buff_cur_name))
+def owl_action_on(rule, buff_name):
+    pass
 
 def owl_action_off(rule):
-    # get current buffer's name
-    buff_cur_ptr = weechat.current_buffer()
-    buff_cur_name = weechat.buffer_get_string(buff_cur_ptr, 'name')
-    weechat.prnt('', 'buff off: {}'.format(buff_cur_name))
+    pass
 
 def owl_analyze(nick_name, nick_host, buff_name, direction):
     for rule in sorted(owl_match):
