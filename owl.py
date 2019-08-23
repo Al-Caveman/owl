@@ -230,7 +230,7 @@ def optimize_configs():
 
 def owl_buff_switch(a,b,c):
     # get current buffer's name
-    buff_cur_ptr = weechat.current_buffer()
+    buff_cur_ptr = c
     buff_cur_name = weechat.buffer_get_string(buff_cur_ptr, 'name')
     if DEBUG:
         weechat.prnt('', 'buff switch   : {}-{}-{}'.format(a,b,c))
