@@ -189,7 +189,7 @@ owl_settings_default = {
         'comma separated list of network.channels where owl is inactive.'),
     'channels_default': (
         'on',
-        'whether owl is active by default, unless overwritten by channels_on or channels_off.  either "on" or "off".'),
+        'whether owl is active by default.  either "on" or "off".'),
     'input_bg_default': (
         'default',
         'default background colour for input line when no owl alert is there.'),
@@ -292,65 +292,54 @@ def owl_analyze(nick_name, nick_host, buff_name, direction):
                 )
                 sys.exit(1)
 
-def owl_init():
-    # check every buffer
-    ilb = weechat.infolist_get('buffer', '', '')
-    while weechat.infolist_next(ilb):
-        buff_ptr = weechat.infolist_pointer(ilb, 'pointer')
-        buff_name = weechat.infolist_string(ilb, 'name')
-        buff_server = weechat.buffer_get_string(buff_ptr, 'localvar_server')
-        buff_channel = weechat.buffer_get_string(buff_ptr, 'localvar_channel')
-        if DEBUG:
-            weechat.prnt('', 'ptr:{} name:{}\n'.format(buff_ptr, buff_name))
-
-        # is owl active in this channel?
-        if (
-            buff_name in owl_on_channels
-            or (buff_name not in owl_off_channels and owl_default_on)
-        ):
-            # analyze nicks in the buffer
-            iln = weechat.infolist_get(
-                'irc_nick', '', '{},{}'.format(buff_server, buff_channel)
-            )
-            while weechat.infolist_next(iln):
-                nick_ptr = weechat.infolist_pointer(iln, 'pointer')
-                nick_name = weechat.infolist_string(iln, 'name')
-                nick_host = weechat.infolist_string(iln, 'host')
-                # should we use /userhost to get hostname?
-                if len(nick_host) == 0:
-                    # track nick-buffer relationship
-                    if buff_server in owl_state['nick_buffs']:
-                        if nick_name in owl_state['nick_buffs'][buff_server]:
-                            owl_state['nick_buffs'][buff_server][nick_name].append(buff_name)
-                        else:
-                            owl_state['nick_buffs'][buff_server][nick_name] = [buff_name]
+def owl_init(buff_name, buff_server, buff_channel):
+    # is owl active in this channel?
+    if (
+        buff_name in owl_on_channels
+        or (buff_name not in owl_off_channels and owl_default_on)
+    ):
+        # analyze nicks in the buffer
+        iln = weechat.infolist_get(
+            'irc_nick', '', '{},{}'.format(buff_server, buff_channel)
+        )
+        while weechat.infolist_next(iln):
+            nick_ptr = weechat.infolist_pointer(iln, 'pointer')
+            nick_name = weechat.infolist_string(iln, 'name')
+            nick_host = weechat.infolist_string(iln, 'host')
+            # should we use /userhost to get hostname?
+            if len(nick_host) == 0:
+                # track nick-buffer relationship
+                if buff_server in owl_state['nick_buffs']:
+                    if nick_name in owl_state['nick_buffs'][buff_server]:
+                        owl_state['nick_buffs'][buff_server][nick_name].append(buff_name)
                     else:
-                        owl_state['nick_buffs'][buff_server] = {
-                            nick_name : [buff_name]
-                        }
-                    # do hookie things
-                    weechat.hook_hsignal_send(
-                        'irc_redirect_command',
-                        {
-                            'server': buff_server,
-                            'pattern': 'userhost',
-                            'signal': 'owl',
-                            'string': nick_name,
-                            'timeout': owl_settings['userhost_timeout'],
-                        }
-                    )
-                    weechat.hook_signal_send(
-                        'irc_input_send',
-                        weechat.WEECHAT_HOOK_SIGNAL_STRING,
-                        '{};;;;/userhost {}'.format(buff_server, nick_name)
-                    )
-                    nick_host = '****PENDING****'
+                        owl_state['nick_buffs'][buff_server][nick_name] = [buff_name]
                 else:
-                    owl_analyze(nick_name, nick_host, buff_name, DIR_IN)
-                if DEBUG:
-                    weechat.prnt( '', '  {}!{}\n'.format(nick_name,nick_host))
-            weechat.infolist_free(iln)
-    weechat.infolist_free(ilb)
+                    owl_state['nick_buffs'][buff_server] = {
+                        nick_name : [buff_name]
+                    }
+                # do hookie things
+                weechat.hook_hsignal_send(
+                    'irc_redirect_command',
+                    {
+                        'server': buff_server,
+                        'pattern': 'userhost',
+                        'signal': 'owl',
+                        'string': nick_name,
+                        'timeout': owl_settings['userhost_timeout'],
+                    }
+                )
+                weechat.hook_signal_send(
+                    'irc_input_send',
+                    weechat.WEECHAT_HOOK_SIGNAL_STRING,
+                    '{};;;;/userhost {}'.format(buff_server, nick_name)
+                )
+                nick_host = '****PENDING****'
+            else:
+                owl_analyze(nick_name, nick_host, buff_name, DIR_IN)
+            if DEBUG:
+                weechat.prnt( '', '  {}!{}\n'.format(nick_name,nick_host))
+        weechat.infolist_free(iln)
 
     return weechat.WEECHAT_RC_OK
 
@@ -369,11 +358,20 @@ if __name__ == '__main__' and import_ok:
         # initialize
         weechat.hook_hsignal('irc_redirection_owl_userhost', 'owl_userhost_cb', '')
         optimize_configs()
-        owl_init()
+        # check every buffer
+        ilb = weechat.infolist_get('buffer', '', '')
+        while weechat.infolist_next(ilb):
+            buff_ptr = weechat.infolist_pointer(ilb, 'pointer')
+            buff_name = weechat.infolist_string(ilb, 'name')
+            buff_server = weechat.buffer_get_string(buff_ptr, 'localvar_server')
+            buff_channel = weechat.buffer_get_string(buff_ptr, 'localvar_channel')
+            if DEBUG:
+                weechat.prnt('', 'ptr:{} name:{}\n'.format(buff_ptr, buff_name))
+            owl_init(buff_name, buff_server, buff_channel)
+        weechat.infolist_free(ilb)
 
         # detect current buffer
         weechat.hook_signal('buffer_switch', 'owl_buff_switch', '')
-
 
         # add command
         weechat.hook_command(
