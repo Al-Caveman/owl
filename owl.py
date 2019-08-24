@@ -264,7 +264,7 @@ def owl_action_off(rule):
 def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
     if DEBUG:
-        weechat.prnt('', 'callback:  {}'.format(rpl_userhost))
+        weechat.prnt('', 'RPL_USERHOST:  {}'.format(rpl_userhost))
     return weechat.WEECHAT_RC_OK
 
 def owl_analyze(nick_name, nick_host, buff_name, direction):
