@@ -246,13 +246,13 @@ def owl_buff_switch(a,b,buff_cur_ptr):
     owl_reset_input()
     if buff_cur_name in owl_state['buff_alerts']:
         for rule in owl_state['buff_alerts'][buff_cur_name]:
-            owl_line_on(rule)
+            owl_inputline_on(rule)
     return weechat.WEECHAT_RC_OK
 
-def owl_line_on(rule):
+def owl_inputline_on(rule):
     pass
 
-def owl_line_off(rule):
+def owl_inputline_off(rule):
     pass
 
 def owl_action_on(rule):
