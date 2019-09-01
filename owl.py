@@ -300,6 +300,8 @@ def owl_init(buff_ptr):
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     buff_server = weechat.buffer_get_string(buff_ptr, 'localvar_server')
     buff_channel = weechat.buffer_get_string(buff_ptr, 'localvar_channel')
+    if DEBUG:
+        weechat.prnt('', 'ptr:{} name:{}\n'.format(buff_ptr, buff_name))
 
     # is owl active in this channel?
     if (
@@ -371,8 +373,6 @@ if __name__ == '__main__' and import_ok:
         ilb = weechat.infolist_get('buffer', '', '')
         while weechat.infolist_next(ilb):
             buff_ptr = weechat.infolist_pointer(ilb, 'pointer')
-            if DEBUG:
-                weechat.prnt('', 'ptr:{} name:{}\n'.format(buff_ptr, buff_name))
             owl_init(buff_ptr)
         weechat.infolist_free(ilb)
 
