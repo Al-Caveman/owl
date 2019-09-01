@@ -241,7 +241,7 @@ def owl_buff_check(buff_ptr):
     # get buffer's name
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
-        weechat.prnt('', 'buff switch to: {}'.format(buff_name))
+        weechat.prnt('', 'checking buffer: {}'.format(buff_name))
     # apply buffers' settings
     owl_reset_input()
     if buff_name in owl_state['buff_alerts']:
@@ -249,6 +249,15 @@ def owl_buff_check(buff_ptr):
             owl_inputline_on(rule)
 
 def owl_buff_switch(a,b,buff_cur_ptr):
+    if DEBUG:
+        weechat.prnt('', 'buff_switch')
+    owl_buff_check(buff_cur_ptr)
+    return weechat.WEECHAT_RC_OK
+
+def owl_buff_current():
+    if DEBUG:
+        weechat.prnt('', 'buff_current')
+    buff_cur_ptr = weechat.current_buffer()
     owl_buff_check(buff_cur_ptr)
     return weechat.WEECHAT_RC_OK
 
@@ -258,16 +267,15 @@ def owl_nick_added(a,b,c):
     weechat.prnt('', 'nicklist_added:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
     return weechat.WEECHAT_RC_OK
 
-def owl_nick_changed(a,b,c):
-    buff_ptr, nick_name = c.split(',')
-    buff_name = weechat.buffer_get_string(buff_ptr, 'name')
-    weechat.prnt('', 'nicklist_changed:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
-    return weechat.WEECHAT_RC_OK
-
 def owl_nick_removed(a,b,c):
     buff_ptr, nick_name = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     weechat.prnt('', 'nicklist_removed:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
+    return weechat.WEECHAT_RC_OK
+
+def owl_nick_changed(a,b,c):
+    owl_nick_removed(a,b,c)
+    owl_nick_added(a,b,c)
     return weechat.WEECHAT_RC_OK
 
 def owl_inputline_on(rule):
