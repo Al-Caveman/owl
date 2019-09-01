@@ -252,6 +252,13 @@ def owl_buff_switch(a,b,buff_cur_ptr):
     owl_buff_check(buff_cur_ptr)
     return weechat.WEECHAT_RC_OK
 
+def owl_nick_added(a,b,c):
+    weechat.prnt('', 'nicklist_added:  {} | {} | {}'.format(a,b,c))
+def owl_nick_changed(a,b,c):
+    weechat.prnt('', 'nicklist_changed:  {} | {} | {}'.format(a,b,c))
+def owl_nick_removed(a,b,c):
+    weechat.prnt('', 'nicklist_removed:  {} | {} | {}'.format(a,b,c))
+
 def owl_inputline_on(rule):
     pass
 
@@ -378,9 +385,9 @@ if __name__ == '__main__' and import_ok:
 
         # register hooks
         weechat.hook_signal('buffer_switch', 'owl_buff_switch', '')
-        #weechat.hook_signal('nicklist_nick_added', 'owl_nick_added', '')
-        #weechat.hook_signal('nicklist_nick_changed', 'owl_nick_changed', '')
-        #weechat.hook_signal('nicklist_nick_removed', 'owl_nick_removed', '')
+        weechat.hook_signal('nicklist_nick_added', 'owl_nick_added', '')
+        weechat.hook_signal('nicklist_nick_changed', 'owl_nick_changed', '')
+        weechat.hook_signal('nicklist_nick_removed', 'owl_nick_removed', '')
 
         # add command
         weechat.hook_command(
