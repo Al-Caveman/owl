@@ -254,10 +254,15 @@ def owl_buff_switch(a,b,buff_cur_ptr):
 
 def owl_nick_added(a,b,c):
     weechat.prnt('', 'nicklist_added:  {} | {} | {}'.format(a,b,c))
+    return weechat.WEECHAT_RC_OK
+
 def owl_nick_changed(a,b,c):
     weechat.prnt('', 'nicklist_changed:  {} | {} | {}'.format(a,b,c))
+    return weechat.WEECHAT_RC_OK
+
 def owl_nick_removed(a,b,c):
     weechat.prnt('', 'nicklist_removed:  {} | {} | {}'.format(a,b,c))
+    return weechat.WEECHAT_RC_OK
 
 def owl_inputline_on(rule):
     pass
