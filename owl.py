@@ -250,13 +250,13 @@ def owl_buff_check(buff_ptr):
 
 def owl_buff_switch(a,b,buff_cur_ptr):
     if DEBUG:
-        weechat.prnt('', 'buff_switch')
+        weechat.prnt('', 'buff switch..')
     owl_buff_check(buff_cur_ptr)
     return weechat.WEECHAT_RC_OK
 
 def owl_buff_current():
     if DEBUG:
-        weechat.prnt('', 'buff_current')
+        weechat.prnt('', 'buff current..')
     buff_cur_ptr = weechat.current_buffer()
     owl_buff_check(buff_cur_ptr)
     return weechat.WEECHAT_RC_OK
