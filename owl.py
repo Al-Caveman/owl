@@ -264,16 +264,20 @@ def owl_buff_current():
 def owl_nick_added(a,b,c):
     buff_ptr, nick_name = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
-    weechat.prnt('', 'nicklist_added:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
+    if DEBUG:
+        weechat.prnt('', 'nick added:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_removed(a,b,c):
     buff_ptr, nick_name = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
-    weechat.prnt('', 'nicklist_removed:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
+    if DEBUG:
+        weechat.prnt('', 'nick removed:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_changed(a,b,c):
+    if DEBUG:
+        weechat.prnt('', 'nick changed..')
     owl_nick_removed(a,b,c)
     owl_nick_added(a,b,c)
     return weechat.WEECHAT_RC_OK
