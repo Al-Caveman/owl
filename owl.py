@@ -265,14 +265,18 @@ def owl_nick_added(a,b,c):
     buff_ptr, nick_name = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
-        weechat.prnt('', 'nick added:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
+        weechat.prnt('', 'nick added:  {}'.format(
+            [a,b,'{}/{}'.format(buff_name,nick_name]))
+        )
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_removed(a,b,c):
     buff_ptr, nick_name = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
-        weechat.prnt('', 'nick removed:  {} | {} | {}/{}'.format(a,b,buff_name,nick_name))
+        weechat.prnt('', 'nick removed:  {}'.format(
+            [a,b,'{}/{}'.format(buff_name,nick_name]))
+        )
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_changed(a,b,c):
