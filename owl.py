@@ -75,111 +75,67 @@ owl_settings_default = {
         '.*!~.*@.*staff.*',
         'python regular expression to match on hostnames for rule 1.'),
     'rule_1_input_bg_on': (
-        'default',
+        '/set weechat.bar.input.color_bg red',
         'background color of input bar when owl spotted stuff in the buffer.'),
     'rule_1_input_bg_off': (
-        'default',
+        '/unset weechat.bar.input.color_bg',
         'background color of input bar when owl spots nothing there in the buffer.'),
     'rule_1_input_fg_on': (
-        'default',
+        '/set weechat.bar.input.color_fg white',
         'foreground color of input bar when owl spotted stuff in the buffer.'),
     'rule_1_input_fg_off': (
-        'default',
+        '/unset weechat.bar.input.color_fg',
         'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_1_action_on': (
-        '/someCommand...',
+        '',
         'some command to execute when rule_1_match is matched in a user.'),
     'rule_1_action_off': (
-        '/someCommand...',
+        '',
         'some command to execute when rule_1_match is no longer matched in a user.'),
 
     'rule_2_match': (
         '',
         'python regular expression to match on hostnames for rule 1.'),
     'rule_2_input_bg_on': (
-        'default',
+        '',
         'background color of input bar when owl spotted stuff in the buffer.'),
     'rule_2_input_bg_off': (
-        'default',
+        '',
         'background color of input bar when owl spots nothing there in the buffer.'),
     'rule_2_input_fg_on': (
-        'default',
+        '',
         'foreground color of input bar when owl spotted stuff in the buffer.'),
     'rule_2_input_fg_off': (
-        'default',
+        '',
         'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_2_action_on': (
-        '/someCommand...',
+        '',
         'some command to execute when rule_2_match is matched in a user.'),
     'rule_2_action_off': (
-        '/someCommand...',
+        '',
         'some command to execute when rule_2_match is no longer matched in a user.'),
 
     'rule_3_match': (
         '',
         'python regular expression to match on hostnames for rule 1.'),
     'rule_3_input_bg_on': (
-        'default',
+        '',
         'background color of input bar when owl spotted stuff in the buffer.'),
     'rule_3_input_bg_off': (
-        'default',
+        '',
         'background color of input bar when owl spots nothing there in the buffer.'),
     'rule_3_input_fg_on': (
-        'default',
+        '',
         'foreground color of input bar when owl spotted stuff in the buffer.'),
     'rule_3_input_fg_off': (
-        'default',
+        '',
         'Foreground color of input bar when owl spots nothing there in the buffer.'),
     'rule_3_action_on': (
-        '/someCommand...',
+        '',
         'some command to execute when rule_3_match is matched in a user.'),
     'rule_3_action_off': (
-        '/someCommand...',
+        '',
         'some command to execute when rule_3_match is no longer matched in a user.'),
-
-    'rule_4_match': (
-        '',
-        'python regular expression to match on hostnames for rule 1.'),
-    'rule_4_input_bg_on': (
-        'default',
-        'background color of input bar when owl spotted stuff in the buffer.'),
-    'rule_4_input_bg_off': (
-        'default',
-        'background color of input bar when owl spots nothing there in the buffer.'),
-    'rule_4_input_fg_on': (
-        'default',
-        'foreground color of input bar when owl spotted stuff in the buffer.'),
-    'rule_4_input_fg_off': (
-        'default',
-        'Foreground color of input bar when owl spots nothing there in the buffer.'),
-    'rule_4_action_on': (
-        '/someCommand...',
-        'some command to execute when rule_4_match is matched in a user.'),
-    'rule_4_action_off': (
-        '/someCommand...',
-        'some command to execute when rule_4_match is no longer matched in a user.'),
-
-    'rule_5_match': (
-        '',
-        'python regular expression to match on hostnames for rule 1.'),
-    'rule_5_input_bg_on': (
-        'default',
-        'background color of input bar when owl spotted stuff in the buffer.'),
-    'rule_5_input_bg_off': (
-        'default',
-        'background color of input bar when owl spots nothing there in the buffer.'),
-    'rule_5_input_fg_on': (
-        'default',
-        'foreground color of input bar when owl spotted stuff in the buffer.'),
-    'rule_5_input_fg_off': (
-        'default',
-        'Foreground color of input bar when owl spots nothing there in the buffer.'),
-    'rule_5_action_on': (
-        '/someCommand...',
-        'some command to execute when rule_5_match is matched in a user.'),
-    'rule_5_action_off': (
-        '/someCommand...',
-        'some command to execute when rule_5_match is no longer matched in a user.'),
 
     'channels_on': (
         '',
@@ -191,10 +147,10 @@ owl_settings_default = {
         'on',
         'whether owl is active by default.  either "on" or "off".'),
     'input_bg_default': (
-        'default',
+        '/set weechat.bar.input.color_bg default',
         'default background colour for input line when no owl alert is there.'),
     'input_fg_default': (
-        'default',
+        '/set weechat.bar.input.color_fg default',
         'default foreground colour for input line when no owl alert is there.'),
     'userhost_timeout': (
         '300',
@@ -219,12 +175,12 @@ def optimize_configs():
     for rule in range(1, RULES+1):
         owl_match[rule] = re.compile(owl_settings['rule_{}_match'.format(rule)])
         owl_action[rule] = {
-            'rule_input_bg_on'  : 'rule_{}_input_bg_on'.format(rule),
-            'rule_input_bg_off' : 'rule_{}_input_bg_off'.format(rule),
-            'rule_input_fg_on'  : 'rule_{}_input_fg_on'.format(rule),
-            'rule_input_fg_off' : 'rule_{}_input_fg_off'.format(rule),
-            'rule_action_on'    : 'rule_{}_action_on'.format(rule),
-            'rule_action_off'   : 'rule_{}_action_off'.format(rule),
+            'rule_input_bg_on'  : owl_settings['rule_{}_input_bg_on'.format(rule)],
+            'rule_input_bg_off' : owl_settings['rule_{}_input_bg_off'.format(rule)],
+            'rule_input_fg_on'  : owl_settings['rule_{}_input_fg_on'.format(rule)],
+            'rule_input_fg_off' : owl_settings['rule_{}_input_fg_off'.format(rule)],
+            'rule_action_on'    : owl_settings['rule_{}_action_on'.format(rule)],
+            'rule_action_off'   : owl_settings['rule_{}_action_off'.format(rule)],
         }
     if owl_settings['channels_default'] == 'on':
         owl_default_on = True
@@ -234,19 +190,13 @@ def optimize_configs():
         owl_on_channels.add(i)
         owl_on_servers.add(i.split('.')[0])
 
-def owl_reset_input():
-    pass
+def owl_weechat_exec(cmd):
+    return weechat.command('', cmd)
 
-def owl_buff_check(buff_ptr):
-    # get buffer's name
-    buff_name = weechat.buffer_get_string(buff_ptr, 'name')
-    if DEBUG:
-        weechat.prnt('', 'checking buffer: {}'.format(buff_name))
-    # apply buffers' settings
-    owl_reset_input()
-    if buff_name in owl_state['buff_alerts']:
-        for rule in owl_state['buff_alerts'][buff_name]:
-            owl_inputline_on(rule)
+def owl_reset_input():
+    owl_weechat_exec(owl_settings['input_bg_default'])
+    owl_weechat_exec(owl_settings['input_fg_default'])
+    return weechat.command('', cmd)
 
 def owl_buff_switch(a,b,buff_cur_ptr):
     if DEBUG:
@@ -260,6 +210,17 @@ def owl_buff_current():
     buff_cur_ptr = weechat.current_buffer()
     owl_buff_check(buff_cur_ptr)
     return weechat.WEECHAT_RC_OK
+
+def owl_buff_check(buff_ptr):
+    # get buffer's name
+    buff_name = weechat.buffer_get_string(buff_ptr, 'name')
+    if DEBUG:
+        weechat.prnt('', 'checking buffer: {}'.format(buff_name))
+    # apply buffers' settings
+    owl_reset_input()
+    if buff_name in owl_state['buff_alerts']:
+        for rule in owl_state['buff_alerts'][buff_name]:
+            owl_inputline_on(rule)
 
 def owl_nick_added(a,b,c):
     buff_ptr, nick_name = c.split(',')
@@ -291,16 +252,20 @@ def owl_nick_changed(a,b,c):
     return weechat.WEECHAT_RC_OK
 
 def owl_inputline_on(rule):
-    pass
+    owl_weechat_exec(owl_action[rule]['rule_input_bg_on'])
+    owl_weechat_exec(owl_action[rule]['rule_input_fg_on'])
 
 def owl_inputline_off(rule):
-    pass
+    owl_weechat_exec(owl_action[rule]['rule_input_bg_off'])
+    owl_weechat_exec(owl_action[rule]['rule_input_fg_off'])
 
 def owl_action_on(rule):
-    pass
+    owl_weechat_exec(owl_action[rule]['rule_action_on'])
+    owl_weechat_exec(owl_action[rule]['rule_action_on'])
 
 def owl_action_off(rule):
-    pass
+    owl_weechat_exec(owl_action[rule]['rule_action_off'])
+    owl_weechat_exec(owl_action[rule]['rule_action_off'])
 
 def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
@@ -317,11 +282,13 @@ def owl_analyze(nick_name, nick_host, buff_name, direction):
                 else:
                     owl_state['buff_alerts'] = {buff_name : 1}
                 if owl_state['buff_alerts'][buff_name] == 0:
+                    owl_buff_current()
                     owl_action_on(rule)
             elif direction == DIR_OUT:
                 owl_state['buff_alerts'][buff_name] -= 1
                 if owl_state['buff_alerts'][buff_name] == 0:
                     del owl_state['buff_alerts'][buff_name]
+                    owl_buff_current()
                     owl_action_off(rule)
             else:
                 weechat.prnt('',
