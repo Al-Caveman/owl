@@ -43,7 +43,7 @@
 #
 # History:
 #
-# 2019-08-14, caveman:
+# 2019-09-03, caveman:
 #     v0: initial version
 
 SCRIPT_NAME = 'owl'
