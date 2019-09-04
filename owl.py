@@ -57,7 +57,7 @@ SCRIPT_COMMAND = 'owl'
 DEBUG = True
 DIR_IN = 0
 DIR_OUT = 1
-RULES = 5
+RULES = 3
 
 import_ok = True
 import re
