@@ -293,8 +293,9 @@ def owl_userhost_cb(a,b,c):
             )
         )
     for buff_server in owl_state['nick_buffs']:
-        for buff_name in owl_state['nick_buffs'][buff_server][nick]:
-            owl_analyze(nick, user, host, buff_name, DIR_IN)
+        if nick in owl_state['nick_buffs'][buff_server]:
+            for buff_name in owl_state['nick_buffs'][buff_server][nick]:
+                owl_analyze(nick, user, host, buff_name, DIR_IN)
     return weechat.WEECHAT_RC_OK
 
 def owl_analyze(nick, user, host, buff_name, direction):
