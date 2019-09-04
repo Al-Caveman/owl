@@ -69,7 +69,7 @@ DIR_IN = 0
 DIR_OUT = 1
 RULES = 3
 RE_USERHOST = re.compile(
-    r'.+ :(?P<nick>\S+?)\*?=(\+|\-)(?P<user>\S+?)@(?P<host>\S+?)$'
+    r'.+ :(?P<nick>\S+?)\*?=(\+|\-)(?P<user>\S+?)@(?P<host>\S+)'
 )
 
 # script options
@@ -274,7 +274,7 @@ def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
     m = RE_USERHOST.match(rpl_userhost)
     if DEBUG:
-        weechat.prnt('', 'RPL_USERHOST:  {};'.format(rpl_userhost))
+        weechat.prnt('', 'RPL_USERHOST:  {}'.format(rpl_userhost))
         weechat.prnt('', 'RPL_USERHOST:  {}'.format(m))
     return weechat.WEECHAT_RC_OK
 
