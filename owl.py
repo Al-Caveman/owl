@@ -46,6 +46,16 @@
 # 2019-09-03, caveman:
 #     v0: initial version
 
+import_ok = True
+import re
+import sys
+try:
+    import weechat
+except ImportError:
+    print('This script must be run under WeeChat.')
+    print('Get WeeChat now at: http://www.weechat.org/')
+    import_ok = False
+
 SCRIPT_NAME = 'owl'
 SCRIPT_AUTHOR = 'caveman <toraboracaveman@protonmail.com>'
 SCRIPT_VERSION = '0'
@@ -58,16 +68,9 @@ DEBUG = True
 DIR_IN = 0
 DIR_OUT = 1
 RULES = 3
-
-import_ok = True
-import re
-import sys
-try:
-    import weechat
-except ImportError:
-    print('This script must be run under WeeChat.')
-    print('Get WeeChat now at: http://www.weechat.org/')
-    import_ok = False
+RE_USERHOST = re.compile(
+    r'.+ :(?P<nick>\S+?)\*?=(\+|\-)(?P<user>\S+?)@(?P<host>\S+?)$'
+)
 
 # script options
 owl_settings_default = {
@@ -227,7 +230,7 @@ def owl_nick_added(a,b,c):
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
         weechat.prnt(
-            '', 'nick removed:  {} in {}'.format(
+            '', 'nick added:  {} in {}'.format(
                 nick_name, buff_name
             )
         )
@@ -269,8 +272,10 @@ def owl_action_off(rule):
 
 def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
+    m = RE_USERHOST.match(rpl_userhost)
     if DEBUG:
         weechat.prnt('', 'RPL_USERHOST:  {}'.format(rpl_userhost))
+        weechat.prnt('', 'RPL_USERHOST:  {}'.format(m))
     return weechat.WEECHAT_RC_OK
 
 def owl_analyze(nick_name, nick_host, buff_name, direction):
