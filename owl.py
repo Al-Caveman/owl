@@ -199,7 +199,7 @@ def owl_weechat_exec(cmd):
 def owl_reset_input():
     owl_weechat_exec(owl_settings['input_bg_default'])
     owl_weechat_exec(owl_settings['input_fg_default'])
-    return weechat.command('', cmd)
+    return weechat.WEECHAT_RC_OK
 
 def owl_buff_switch(a,b,buff_cur_ptr):
     if DEBUG:
