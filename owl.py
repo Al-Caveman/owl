@@ -313,7 +313,7 @@ def owl_analyze(nick, user, host, buff_name, direction):
                     owl_state['buff_alerts'][buff_name] = {rule: 1}
                 owl_buff_current()
                 owl_action_on(rule)
-            if direction == DIR_OUT:
+            elif direction == DIR_OUT:
                 if buff_name in owl_state['buff_alerts']:
                     if rule in owl_state['buff_alerts'][buff_name]:
                         owl_state['buff_alerts'][buff_name][rule] -= 1
