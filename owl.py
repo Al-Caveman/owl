@@ -274,7 +274,7 @@ def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
     m = RE_USERHOST.match(rpl_userhost)
     if DEBUG:
-        weechat.prnt('', 'RPL_USERHOST:  {}'.format(rpl_userhost))
+        weechat.prnt('', 'RPL_USERHOST:  {};'.format(rpl_userhost))
         weechat.prnt('', 'RPL_USERHOST:  {}'.format(m))
     return weechat.WEECHAT_RC_OK
 
