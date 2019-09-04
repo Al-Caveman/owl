@@ -194,7 +194,8 @@ def optimize_configs():
         owl_on_servers.add(i.split('.')[0])
 
 def owl_weechat_exec(cmd):
-    return weechat.command('', cmd)
+    if len(cmd):
+        weechat.command('', cmd)
 
 def owl_reset_input():
     owl_weechat_exec(owl_settings['input_bg_default'])
