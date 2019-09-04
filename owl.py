@@ -281,7 +281,7 @@ def owl_userhost_cb(a,b,c):
         weechat.prnt(
             '',
             'RPL_USERHOST:  {}'.format(
-                rpl_userhos
+                rpl_userhost
             )
         )
         weechat.prnt(
