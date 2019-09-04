@@ -222,7 +222,7 @@ def owl_buff_check(buff_ptr):
     # apply buffers' settings
     owl_reset_input()
     if buff_name in owl_state['buff_alerts']:
-        for rule in owl_state['buff_alerts'][buff_name]:
+        for rule in sorted(owl_state['buff_alerts'][buff_name]):
             owl_inputline_on(rule)
 
 def owl_nick_added(a,b,c):
@@ -300,22 +300,25 @@ def owl_userhost_cb(a,b,c):
     return weechat.WEECHAT_RC_OK
 
 def owl_analyze(nick, user, host, buff_name, direction):
+    nick_user_host = '{}!{}@{}'.format(nick, user, host)
     for rule in sorted(owl_match):
-        if owl_match[rule].match('{}!{}@{}'.format(nick, user, host)):
+        if owl_match[rule].match(nick_user_host):
             if direction == DIR_IN:
                 if buff_name in owl_state['buff_alerts']:
-                    owl_state['buff_alerts'][buff_name] += 1
+                    if rule in owl_state['buff_alerts'][buff_name]:
+                        owl_state['buff_alerts'][buff_name][rule] += 1
+                    else:
+                        owl_state['buff_alerts'][buff_name][rule] = 1
                 else:
-                    owl_state['buff_alerts'] = {buff_name : 1}
-                if owl_state['buff_alerts'][buff_name] == 0:
-                    owl_buff_current()
-                    owl_action_on(rule)
-            elif direction == DIR_OUT:
-                owl_state['buff_alerts'][buff_name] -= 1
-                if owl_state['buff_alerts'][buff_name] == 0:
-                    del owl_state['buff_alerts'][buff_name]
-                    owl_buff_current()
-                    owl_action_off(rule)
+                    owl_state['buff_alerts'][buff_name] = {rule: 1}
+                owl_buff_current()
+                owl_action_on(rule)
+            if direction == DIR_OUT:
+                if buff_name in owl_state['buff_alerts']:
+                    if rule in owl_state['buff_alerts'][buff_name]:
+                        owl_state['buff_alerts'][buff_name][rule] -= 1
+                owl_buff_current()
+                owl_action_off(rule)
             else:
                 weechat.prnt('',
                     'error code:  0xDEADBEEF.  '
