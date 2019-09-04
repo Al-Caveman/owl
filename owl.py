@@ -272,11 +272,6 @@ def owl_action_off(rule):
 
 def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
-    m = RE_USERHOST.match(rpl_userhost)
-    g = m.groupdict()
-    nick = g['nick']
-    user = g['user']
-    host = g['host']
     if DEBUG:
         weechat.prnt(
             '',
@@ -284,6 +279,12 @@ def owl_userhost_cb(a,b,c):
                 rpl_userhost
             )
         )
+    m = RE_USERHOST.match(rpl_userhost)
+    g = m.groupdict()
+    nick = g['nick']
+    user = g['user']
+    host = g['host']
+    if DEBUG:
         weechat.prnt(
             '',
             '            :  nick:{} user:{} host:{}'.format(
