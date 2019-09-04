@@ -226,23 +226,23 @@ def owl_buff_check(buff_ptr):
             owl_inputline_on(rule)
 
 def owl_nick_added(a,b,c):
-    buff_ptr, nick_name = c.split(',')
+    buff_ptr, nick = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
         weechat.prnt(
             '', 'nick added:  {} in {}'.format(
-                nick_name, buff_name
+                nick , buff_name
             )
         )
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_removed(a,b,c):
-    buff_ptr, nick_name = c.split(',')
+    buff_ptr, nick = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
         weechat.prnt(
             '', 'nick removed:  {} in {}'.format(
-                nick_name, buff_name
+                nick , buff_name
             )
         )
     return weechat.WEECHAT_RC_OK
@@ -274,21 +274,32 @@ def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
     m = RE_USERHOST.match(rpl_userhost)
     g = m.groupdict()
+    nick = g['nick']
+    user = g['user']
+    host = g['host']
     if DEBUG:
-        weechat.prnt('', 'RPL_USERHOST:  {}'.format(rpl_userhost))
+        weechat.prnt(
+            '',
+            'RPL_USERHOST:  {}'.format(
+                rpl_userhos
+            )
+        )
         weechat.prnt(
             '',
             '            :  nick:{} user:{} host:{}'.format(
-                g['nick'],
-                g['user'],
-                g['host'],
+                nick,
+                user,
+                host,
             )
         )
+    for buff_server in owl_state['nick_buffs']:
+        for buff_name in owl_state['nick_buffs'][buff_server][nick]:
+            owl_analyze(nick, user, host, buff_name, DIR_IN)
     return weechat.WEECHAT_RC_OK
 
-def owl_analyze(nick_name, nick_host, buff_name, direction):
+def owl_analyze(nick, user, host, buff_name, direction):
     for rule in sorted(owl_match):
-        if owl_match[rule].match('{}!{}'.format(nick_name, nick_host)):
+        if owl_match[rule].match('{}!{}@{}'.format(nick, user, host)):
             if direction == DIR_IN:
                 if buff_name in owl_state['buff_alerts']:
                     owl_state['buff_alerts'][buff_name] += 1
@@ -332,19 +343,19 @@ def owl_init(buff_ptr):
         )
         while weechat.infolist_next(iln):
             nick_ptr = weechat.infolist_pointer(iln, 'pointer')
-            nick_name = weechat.infolist_string(iln, 'name')
-            nick_host = weechat.infolist_string(iln, 'host')
+            nick = weechat.infolist_string(iln, 'name')
+            user_host = weechat.infolist_string(iln, 'host')
             # should we use /userhost to get hostname?
-            if len(nick_host) == 0:
+            if len(user_host) == 0:
                 # track nick-buffer relationship
                 if buff_server in owl_state['nick_buffs']:
-                    if nick_name in owl_state['nick_buffs'][buff_server]:
-                        owl_state['nick_buffs'][buff_server][nick_name].append(buff_name)
+                    if nick in owl_state['nick_buffs'][buff_server]:
+                        owl_state['nick_buffs'][buff_server][nick].append(buff_name)
                     else:
-                        owl_state['nick_buffs'][buff_server][nick_name] = [buff_name]
+                        owl_state['nick_buffs'][buff_server][nick] = [buff_name]
                 else:
                     owl_state['nick_buffs'][buff_server] = {
-                        nick_name : [buff_name]
+                        nick : [buff_name]
                     }
                 # do hookie things
                 weechat.hook_hsignal_send(
@@ -353,20 +364,21 @@ def owl_init(buff_ptr):
                         'server': buff_server,
                         'pattern': 'userhost',
                         'signal': 'owl',
-                        'string': nick_name,
+                        'string': nick,
                         'timeout': owl_settings['userhost_timeout'],
                     }
                 )
                 weechat.hook_signal_send(
                     'irc_input_send',
                     weechat.WEECHAT_HOOK_SIGNAL_STRING,
-                    '{};;;;/userhost {}'.format(buff_server, nick_name)
+                    '{};;;;/userhost {}'.format(buff_server, nick)
                 )
-                nick_host = '****PENDING****'
+                user_host = '****PENDING****'
             else:
-                owl_analyze(nick_name, nick_host, buff_name, DIR_IN)
+                user, host = user_host.split('@')
+                owl_analyze(nick, user, host, buff_name, DIR_IN)
             if DEBUG:
-                weechat.prnt( '', '  {}!{}\n'.format(nick_name,nick_host))
+                weechat.prnt( '', '  {}!{}\n'.format(nick, user_host))
         weechat.infolist_free(iln)
 
     return weechat.WEECHAT_RC_OK
