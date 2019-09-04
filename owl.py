@@ -317,6 +317,8 @@ def owl_analyze(nick, user, host, buff_name, direction):
                 if buff_name in owl_state['buff_alerts']:
                     if rule in owl_state['buff_alerts'][buff_name]:
                         owl_state['buff_alerts'][buff_name][rule] -= 1
+                if owl_state['buff_alerts'][buff_name][rule] == 0:
+                    del owl_state['buff_alerts'][buff_name][rule]
                 owl_buff_current()
                 owl_action_off(rule)
             else:
