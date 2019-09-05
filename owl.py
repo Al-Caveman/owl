@@ -237,6 +237,7 @@ def owl_config_update(a,b,c):
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_added(a,b,c):
+    weechat.prnt('', 'TEST:  {}-{}-{}'.format(a,b,c))
     buff_ptr, nick = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
@@ -298,10 +299,10 @@ def owl_userhost_cb(a,b,c):
                     buffs.append(buff_name)
                     owl_analyze(nick, user, host, buff_name, DIR_IN)
         if DEBUG:
-            weechat.prnt('', '   nick:  {}'.format(nick))
-            weechat.prnt('', '   user:  {}'.format(user))
-            weechat.prnt('', '   host:  {}'.format(host))
-            weechat.prnt('', '   buff:  {}'.format(buffs))
+            weechat.prnt('', '  nick:  {}'.format(nick))
+            weechat.prnt('', '  user:  {}'.format(user))
+            weechat.prnt('', '  host:  {}'.format(host))
+            weechat.prnt('', '  buff:  {}'.format(buffs))
     except AttributeError as e:
         if DEBUG:
             weechat.prnt('', e)
