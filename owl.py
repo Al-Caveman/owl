@@ -232,6 +232,7 @@ def owl_nick_added(a,b,c):
                 nick , buff_name
             )
         )
+    owl_analyze(nick, user, host, buff_name, direction)
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_removed(a,b,c):
@@ -270,21 +271,25 @@ def owl_userhost_cb(a,b,c):
             )
         )
     m = RE_USERHOST.match(rpl_userhost)
-    g = m.groupdict()
-    nick = g['nick']
-    user = g['user']
-    host = g['host']
-    buffs = []
-    for buff_server in owl_state['nick_buffs']:
-        if nick in owl_state['nick_buffs'][buff_server]:
-            for buff_name in owl_state['nick_buffs'][buff_server][nick]:
-                buffs.append(buff_name)
-                owl_analyze(nick, user, host, buff_name, DIR_IN)
-    if DEBUG:
-        weechat.prnt('', '   nick:  {}'.format(nick))
-        weechat.prnt('', '   user:  {}'.format(user))
-        weechat.prnt('', '   host:  {}'.format(host))
-        weechat.prnt('', '   buff:  {}'.format(buffs))
+    try:
+        g = m.groupdict()
+        nick = g['nick']
+        user = g['user']
+        host = g['host']
+        buffs = []
+        for buff_server in owl_state['nick_buffs']:
+            if nick in owl_state['nick_buffs'][buff_server]:
+                for buff_name in owl_state['nick_buffs'][buff_server][nick]:
+                    buffs.append(buff_name)
+                    owl_analyze(nick, user, host, buff_name, DIR_IN)
+        if DEBUG:
+            weechat.prnt('', '   nick:  {}'.format(nick))
+            weechat.prnt('', '   user:  {}'.format(user))
+            weechat.prnt('', '   host:  {}'.format(host))
+            weechat.prnt('', '   buff:  {}'.format(buffs))
+    except AttributeError as e:
+        if DEBUG:
+            weechat.prnt('', e)
     return weechat.WEECHAT_RC_OK
 
 def owl_analyze(nick, user, host, buff_name, direction):
