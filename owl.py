@@ -147,6 +147,8 @@ owl_settings = {}
 owl_state = {
     'nick_buffs' : {},
     'buff_alerts' : {},
+    'last_buff' : None,
+    'settings_changed':  False,
 }
 owl_on_buffers = set()
 owl_off_buffers = set()
@@ -187,11 +189,21 @@ def owl_buff_check(buff_ptr):
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
         weechat.prnt('', 'checking buffer: {}'.format(buff_name))
-    # apply buffers' settings
-    owl_reset_input()
-    if buff_name in owl_state['buff_alerts']:
-        for rule in sorted(owl_state['buff_alerts'][buff_name]):
-            owl_inputline_on(rule)
+    # apply buffers' settings only if buffer has changed, or if settings
+    # changed
+    if (
+        owl_state['last_buff'] == buff_name
+        or owl_state['settings_changed'] == True
+    ):
+        if DEBUG:
+            weechat.prnt('', '  buffer unchanged.  skipping..')
+    else:
+        owl_state['last_buff'] = buff_name
+        owl_state['settings_changed'] = False
+        owl_reset_input()
+        if buff_name in owl_state['buff_alerts']:
+            for rule in sorted(owl_state['buff_alerts'][buff_name]):
+                owl_inputline_on(rule)
 
 def owl_buff_switch(a,b,buff_cur_ptr):
     if DEBUG:
@@ -218,6 +230,7 @@ def owl_config_set():
 def owl_config_update(a,b,c):
     if DEBUG:
         weechat.prnt('', 'config updated')
+    owl_state['settings_changed'] = True
     owl_config_set()
     optimize_configs()
     owl_buff_current()
