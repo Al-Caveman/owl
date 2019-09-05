@@ -206,9 +206,19 @@ def owl_buff_current():
     owl_buff_check(buff_cur_ptr)
     return weechat.WEECHAT_RC_OK
 
+def owl_config_set():
+    for option, value in owl_settings_default.items():
+        if weechat.config_is_set_plugin(option):
+            owl_settings[option] = weechat.config_get_plugin(option)
+        else:
+            weechat.config_set_plugin(option, value[0])
+            weechat.config_set_desc_plugin(option, value[1])
+            owl_settings[option] = value[0]
+
 def owl_config_update(a,b,c):
     if DEBUG:
         weechat.prnt('', 'config updated')
+    owl_config_set()
     optimize_configs()
     owl_buff_current()
     return weechat.WEECHAT_RC_OK
@@ -370,32 +380,24 @@ def owl_init(buff_ptr):
 if __name__ == '__main__' and import_ok:
     if weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION,
                         SCRIPT_LICENSE, SCRIPT_DESC, '', ''):
-        # set default settings
-        for option, value in owl_settings_default.items():
-            if weechat.config_is_set_plugin(option):
-                owl_settings[option] = weechat.config_get_plugin(option)
-            else:
-                weechat.config_set_plugin(option, value[0])
-                weechat.config_set_desc_plugin(option, value[1])
-                owl_settings[option] = value[0]
-
         # initialize
-        weechat.hook_hsignal('irc_redirection_owl_userhost', 'owl_userhost_cb', '')
+        owl_config_set()
         optimize_configs()
 
-        # check every buffer
-        ilb = weechat.infolist_get('buffer', '', '')
-        while weechat.infolist_next(ilb):
-            buff_ptr = weechat.infolist_pointer(ilb, 'pointer')
-            owl_init(buff_ptr)
-        weechat.infolist_free(ilb)
-
         # register hooks
+        weechat.hook_hsignal('irc_redirection_owl_userhost', 'owl_userhost_cb', '')
         weechat.hook_signal('buffer_switch', 'owl_buff_switch', '')
         weechat.hook_signal('nicklist_nick_added', 'owl_nick_added', '')
         weechat.hook_signal('nicklist_nick_changed', 'owl_nick_changed', '')
         weechat.hook_signal('nicklist_nick_removed', 'owl_nick_removed', '')
         weechat.hook_config('*', 'owl_config_update', '')
+
+        # check every buffer at start up
+        ilb = weechat.infolist_get('buffer', '', '')
+        while weechat.infolist_next(ilb):
+            buff_ptr = weechat.infolist_pointer(ilb, 'pointer')
+            owl_init(buff_ptr)
+        weechat.infolist_free(ilb)
 
         # add command
         weechat.hook_command(
