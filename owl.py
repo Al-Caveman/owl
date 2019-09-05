@@ -207,6 +207,8 @@ def owl_buff_current():
     return weechat.WEECHAT_RC_OK
 
 def owl_config_update(a,b,c):
+    if DEBUG:
+        weechat.prnt('', 'config updated')
     optimize_configs()
     owl_buff_current()
     return weechat.WEECHAT_RC_OK
