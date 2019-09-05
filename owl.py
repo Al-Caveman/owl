@@ -393,7 +393,7 @@ if __name__ == '__main__' and import_ok:
         weechat.hook_signal('nicklist_nick_added', 'owl_nick_added', '')
         weechat.hook_signal('nicklist_nick_changed', 'owl_nick_changed', '')
         weechat.hook_signal('nicklist_nick_removed', 'owl_nick_removed', '')
-        weechat.hook_config('plugins.var.python.owl.*', 'owl_config_update', '')
+        weechat.hook_config('*', 'owl_config_update', '')
 
         # add command
         weechat.hook_command(
