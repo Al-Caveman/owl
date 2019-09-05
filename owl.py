@@ -274,19 +274,17 @@ def owl_userhost_cb(a,b,c):
     nick = g['nick']
     user = g['user']
     host = g['host']
-    if DEBUG:
-        weechat.prnt(
-            '',
-            '            :  nick:{} user:{} host:{}'.format(
-                nick,
-                user,
-                host,
-            )
-        )
+    buffs = []
     for buff_server in owl_state['nick_buffs']:
         if nick in owl_state['nick_buffs'][buff_server]:
             for buff_name in owl_state['nick_buffs'][buff_server][nick]:
+                buffs.append(buff_name)
                 owl_analyze(nick, user, host, buff_name, DIR_IN)
+    if DEBUG:
+        weechat.prnt('', '   nick:  {}'.format(nick))
+        weechat.prnt('', '   user:  {}'.format(user))
+        weechat.prnt('', '   host:  {}'.format(host))
+        weechat.prnt('', '   buff:  {}'.format(buffs))
     return weechat.WEECHAT_RC_OK
 
 def owl_analyze(nick, user, host, buff_name, direction):
