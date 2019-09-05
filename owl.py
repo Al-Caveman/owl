@@ -245,10 +245,11 @@ def owl_nick_added(a,b,c):
                 nick , buff_name
             )
         )
-    owl_analyze(nick, user, host, buff_name, direction)
+    owl_analyze(nick, user, host, buff_name, DIR_IN)
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_removed(a,b,c):
+    weechat.prnt('', 'TEST:  {}-{}-{}'.format(a,b,c))
     buff_ptr, nick = c.split(',')
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
@@ -257,6 +258,7 @@ def owl_nick_removed(a,b,c):
                 nick , buff_name
             )
         )
+    owl_analyze(nick, user, host, buff_name, DIR_OUT)
     return weechat.WEECHAT_RC_OK
 
 def owl_nick_changed(a,b,c):
