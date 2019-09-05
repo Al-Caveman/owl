@@ -89,12 +89,6 @@ owl_settings_default = {
     'rule_1_input_fg_off': (
         '/unset weechat.bar.input.color_fg',
         'Foreground color of input bar when owl spots nothing there in the buffer.'),
-    'rule_1_action_on': (
-        '',
-        'some command to execute when rule_1_match is matched in a user.'),
-    'rule_1_action_off': (
-        '',
-        'some command to execute when rule_1_match is no longer matched in a user.'),
 
     'rule_2_match': (
         '',
@@ -111,12 +105,6 @@ owl_settings_default = {
     'rule_2_input_fg_off': (
         '',
         'Foreground color of input bar when owl spots nothing there in the buffer.'),
-    'rule_2_action_on': (
-        '',
-        'some command to execute when rule_2_match is matched in a user.'),
-    'rule_2_action_off': (
-        '',
-        'some command to execute when rule_2_match is no longer matched in a user.'),
 
     'rule_3_match': (
         '',
@@ -133,19 +121,13 @@ owl_settings_default = {
     'rule_3_input_fg_off': (
         '',
         'Foreground color of input bar when owl spots nothing there in the buffer.'),
-    'rule_3_action_on': (
-        '',
-        'some command to execute when rule_3_match is matched in a user.'),
-    'rule_3_action_off': (
-        '',
-        'some command to execute when rule_3_match is no longer matched in a user.'),
 
-    'channels_on': (
+    'buffers_on': (
         '',
-        'comma separated list of network.channels where owl is active.'),
-    'channels_off': (
+        'comma separated list of buffer names, e.g. freenode.#chan,dalnet.#chan2, where owl is active.'),
+    'buffers_off': (
         '',
-        'comma separated list of network.channels where owl is inactive.'),
+        'comma separated list of buffer names, e.g. freenode.#chan,dalnet.#chan2, where owl is inactive.'),
     'channels_default': (
         'on',
         'whether owl is active by default.  either "on" or "off".'),
@@ -166,9 +148,8 @@ owl_state = {
     'nick_buffs' : {},
     'buff_alerts' : {},
 }
-owl_on_servers = set()
-owl_on_channels = set()
-owl_off_channels = set()
+owl_on_buffers = set()
+owl_off_buffers = set()
 owl_default_on = False
 owl_match = {}
 owl_action = {}
@@ -182,16 +163,15 @@ def optimize_configs():
             'rule_input_bg_off' : owl_settings['rule_{}_input_bg_off'.format(rule)],
             'rule_input_fg_on'  : owl_settings['rule_{}_input_fg_on'.format(rule)],
             'rule_input_fg_off' : owl_settings['rule_{}_input_fg_off'.format(rule)],
-            'rule_action_on'    : owl_settings['rule_{}_action_on'.format(rule)],
-            'rule_action_off'   : owl_settings['rule_{}_action_off'.format(rule)],
         }
     if owl_settings['channels_default'] == 'on':
         owl_default_on = True
-    for i in owl_settings['channels_off'].split(','):
-        owl_off_channels.add(i)
-    for i in owl_settings['channels_on'].split(','):
-        owl_on_channels.add(i)
-        owl_on_servers.add(i.split('.')[0])
+    owl_off_buffers.clear()
+    owl_on_buffers.clear()
+    for i in owl_settings['buffers_off'].split(','):
+        owl_off_buffers.add(i)
+    for i in owl_settings['buffers_on'].split(','):
+        owl_on_buffers.add(i)
 
 def owl_weechat_exec(cmd):
     if len(cmd):
@@ -201,6 +181,17 @@ def owl_reset_input():
     owl_weechat_exec(owl_settings['input_bg_default'])
     owl_weechat_exec(owl_settings['input_fg_default'])
     return weechat.WEECHAT_RC_OK
+
+def owl_buff_check(buff_ptr):
+    # get buffer's name
+    buff_name = weechat.buffer_get_string(buff_ptr, 'name')
+    if DEBUG:
+        weechat.prnt('', 'checking buffer: {}'.format(buff_name))
+    # apply buffers' settings
+    owl_reset_input()
+    if buff_name in owl_state['buff_alerts']:
+        for rule in sorted(owl_state['buff_alerts'][buff_name]):
+            owl_inputline_on(rule)
 
 def owl_buff_switch(a,b,buff_cur_ptr):
     if DEBUG:
@@ -215,16 +206,10 @@ def owl_buff_current():
     owl_buff_check(buff_cur_ptr)
     return weechat.WEECHAT_RC_OK
 
-def owl_buff_check(buff_ptr):
-    # get buffer's name
-    buff_name = weechat.buffer_get_string(buff_ptr, 'name')
-    if DEBUG:
-        weechat.prnt('', 'checking buffer: {}'.format(buff_name))
-    # apply buffers' settings
-    owl_reset_input()
-    if buff_name in owl_state['buff_alerts']:
-        for rule in sorted(owl_state['buff_alerts'][buff_name]):
-            owl_inputline_on(rule)
+def owl_config_update(a,b,c):
+    optimize_configs()
+    owl_buff_current()
+    return weechat.WEECHAT_RC_OK
 
 def owl_nick_added(a,b,c):
     buff_ptr, nick = c.split(',')
@@ -262,14 +247,6 @@ def owl_inputline_on(rule):
 def owl_inputline_off(rule):
     owl_weechat_exec(owl_action[rule]['rule_input_bg_off'])
     owl_weechat_exec(owl_action[rule]['rule_input_fg_off'])
-
-def owl_action_on(rule):
-    owl_weechat_exec(owl_action[rule]['rule_action_on'])
-    owl_weechat_exec(owl_action[rule]['rule_action_on'])
-
-def owl_action_off(rule):
-    owl_weechat_exec(owl_action[rule]['rule_action_off'])
-    owl_weechat_exec(owl_action[rule]['rule_action_off'])
 
 def owl_userhost_cb(a,b,c):
     rpl_userhost = c['output']
@@ -313,7 +290,6 @@ def owl_analyze(nick, user, host, buff_name, direction):
                 else:
                     owl_state['buff_alerts'][buff_name] = {rule: 1}
                 owl_buff_current()
-                owl_action_on(rule)
             elif direction == DIR_OUT:
                 if buff_name in owl_state['buff_alerts']:
                     if rule in owl_state['buff_alerts'][buff_name]:
@@ -321,7 +297,6 @@ def owl_analyze(nick, user, host, buff_name, direction):
                 if owl_state['buff_alerts'][buff_name][rule] == 0:
                     del owl_state['buff_alerts'][buff_name][rule]
                 owl_buff_current()
-                owl_action_off(rule)
             else:
                 weechat.prnt('',
                     'error code:  0xDEADBEEF.  '
@@ -330,7 +305,6 @@ def owl_analyze(nick, user, host, buff_name, direction):
                     'but apparently he was wrong, as you can attest.  '
                     'plz submit an issue in https://github.com/al-caveman/owl.'
                 )
-                sys.exit(1)
 
 def owl_init(buff_ptr):
     # get more info about this buffer
@@ -342,8 +316,8 @@ def owl_init(buff_ptr):
 
     # is owl active in this channel?
     if (
-        buff_name in owl_on_channels
-        or (buff_name not in owl_off_channels and owl_default_on)
+        buff_name in owl_on_buffers
+        or (buff_name not in owl_off_buffers and owl_default_on)
     ):
         # analyze nicks in the buffer
         iln = weechat.infolist_get(
@@ -419,6 +393,7 @@ if __name__ == '__main__' and import_ok:
         weechat.hook_signal('nicklist_nick_added', 'owl_nick_added', '')
         weechat.hook_signal('nicklist_nick_changed', 'owl_nick_changed', '')
         weechat.hook_signal('nicklist_nick_removed', 'owl_nick_removed', '')
+        weechat.hook_config('plugins.var.python.owl.*', 'owl_config_update', '')
 
         # add command
         weechat.hook_command(
