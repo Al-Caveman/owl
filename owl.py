@@ -396,9 +396,10 @@ def owl_init(buff_ptr):
 
     return weechat.WEECHAT_RC_OK
 
-def owl_cmd(a,b,c):
+def owl_cmd(a, buff_ptr, c):
+    buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     if DEBUG:
-        weechat.prnt('', 'owl cmd: {}-{}-{}'.format(a,b,c))
+        weechat.prnt('', 'cmd in buffer: {}'.format(buff_name))
     return weechat.WEECHAT_RC_OK
 
 if __name__ == '__main__' and import_ok:
