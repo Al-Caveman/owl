@@ -411,7 +411,7 @@ if __name__ == '__main__' and import_ok:
         weechat.hook_signal('nicklist_nick_removed', 'owl_nick_removed', '')
         weechat.hook_config('plugins.var.python.owl.*', 'owl_config_update', '')
 
-        # check every bufferGat start up
+        # check every buffer at start up
         ilb = weechat.infolist_get('buffer', '', '')
         while weechat.infolist_next(ilb):
             buff_ptr = weechat.infolist_pointer(ilb, 'pointer')
