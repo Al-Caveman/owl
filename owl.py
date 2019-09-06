@@ -56,6 +56,16 @@ SCRIPT_LICENSE = 'GPL3'
 SCRIPT_DESC = 'Warns you of silent dogs, such as preying network staffers.'
 
 SCRIPT_COMMAND = 'owl'
+SCRIPT_ARGS_DESC= """
+list [[network.]#channel]   : shows the list of matched nicks in the current
+                              buffer (by default), or in the specified buffer.
+
+enable [[network.]#channel] : enables owl in the current buffer (by default),
+                              or in the specified buffer.
+
+disalbe [[network.]#channel]: enables owl in the current buffer (by default),
+                              or in the specified buffer.
+"""
 
 DEBUG = True
 DIR_IN = 0
@@ -433,7 +443,7 @@ if __name__ == '__main__' and import_ok:
             SCRIPT_COMMAND,
             SCRIPT_DESC,
             '[list] | [enable|disable [server.channel|channel]]',
-            'description of arguments...',
+            SCRIPT_ARGS_DESC,
             'list'
             ' || enable %(filters_names)'
             ' || disable %(filters_names)',
