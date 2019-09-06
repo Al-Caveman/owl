@@ -26,20 +26,13 @@
 # "The silent dog is more dangerous than the barking one." -- caveman, 2019
 # 
 # owl allows for colorizing the input field depending on whether there are
-# preys lurking in the background in the current buffer, as well as letting you
-# list them in the buffer.
+# hunters lurking in the background in the current buffer, as well as letting
+# you list them in the buffer.
 #
 #
-# How does it work?
+# How does it work?  See `/help owl`
 #
-# 1. /owl in a channel to list preys.
-# 2. /set owl to configure more stuff.  Here you configure a regular expression
-# to match preys.  By default *!~*@*staff* is added (better be safe than
-# sorry), and the input field's colour changes upon the existence of preys such
-# that its background is dark red, and your input text is yellow.
-#
-# Happy IRCing, and I wish you survival.
-#
+
 #
 # History:
 #
@@ -434,3 +427,15 @@ if __name__ == '__main__' and import_ok:
             'owl_cmd',
             ''
         )
+
+        # add command
+        weechat.hook_command(
+            SCRIPT_COMMAND,
+            SCRIPT_DESC,
+            '[list] | [enable|disable [server.channel|channel]]',
+            'description of arguments...',
+            'list'
+            ' || enable %(filters_names)'
+            ' || disable %(filters_names)',
+            'owl_cmd',
+            '')
