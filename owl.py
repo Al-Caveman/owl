@@ -444,7 +444,7 @@ def owl_cmd(a, buff_ptr, c):
         weechat.prnt('', '  server: {}'.format(buff_server))
         weechat.prnt('', '  channel: {}'.format(buff_channel))
         weechat.prnt('', '  subcommand: {}'.format(args[0]))
-        weechat.prnt('', '  args: {}'.format(buff_names)
+        weechat.prnt('', '  args: {}'.format(buff_names))
     if args[0] == 'list':
         pass
     elif args[0] == 'enable':
