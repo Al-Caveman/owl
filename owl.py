@@ -451,7 +451,13 @@ def owl_cmd(a, buff_ptr, c):
         for b in buff_names:
             if b in owl_state['buff_alerts']:
                 nothing_found = False
-                weechat.prnt(buff_ptr, '{}{}:'.format(weechat.prefix('action'),b))
+                weechat.prnt(
+                    buff_ptr,
+                    '{}silent dogs in {}:'.format(
+                        weechat.prefix('action'),
+                        b
+                    )
+                )
                 for rule in owl_state['buff_alerts'][b]:
                     nicks = []
                     for i in sorted(owl_state['buff_alerts'][b][rule]):
