@@ -464,7 +464,7 @@ def owl_cmd(a, buff_ptr, c):
                             ' '.join(nicks)
                         )
                     )
-        nothing_found:
+        if nothing_found:
             weechat.prnt(
                 buff_ptr,
                 '{}{}'.format(
