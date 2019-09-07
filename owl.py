@@ -336,17 +336,17 @@ def owl_analyze(nick, user, host, buff_name, direction):
             if direction == DIR_IN:
                 if buff_name in owl_state['buff_alerts']:
                     if rule in owl_state['buff_alerts'][buff_name]:
-                        owl_state['buff_alerts'][buff_name][rule] += 1
+                        owl_state['buff_alerts'][buff_name][rule].add(nick_user_host)
                     else:
-                        owl_state['buff_alerts'][buff_name][rule] = 1
+                        owl_state['buff_alerts'][buff_name][rule] = {nick_user_host}
                 else:
-                    owl_state['buff_alerts'][buff_name] = {rule: 1}
+                    owl_state['buff_alerts'][buff_name] = {rule: {nick_user_host}}
                 owl_buff_current()
             elif direction == DIR_OUT:
                 if buff_name in owl_state['buff_alerts']:
                     if rule in owl_state['buff_alerts'][buff_name]:
-                        owl_state['buff_alerts'][buff_name][rule] -= 1
-                if owl_state['buff_alerts'][buff_name][rule] == 0:
+                        owl_state['buff_alerts'][buff_name][rule].remove(nick_user_host)
+                if len(owl_state['buff_alerts'][buff_name][rule]) == 0:
                     del owl_state['buff_alerts'][buff_name][rule]
                 owl_buff_current()
             else:
@@ -431,10 +431,10 @@ def owl_cmd(a, buff_ptr, c):
             tmp_channel = buff_channel
             if m:
                 if len(m.groupdict()['server']):
-                    tmp_server = m.groupdict()['server'][:-1]
+                    tmp_server = m.groupdict()['server']
                 if len(m.groupdict()['channel']):
                     tmp_channel = m.groupdict()['channel']
-            tmp_buff_name = '{}.{}'.format(tmp_server, tmp_channel)
+                tmp_buff_name = '{}{}'.format(tmp_server, tmp_channel)
             buff_names.append(tmp_buff_name)
     else:
             buff_names.append(buff_name)
@@ -446,7 +446,12 @@ def owl_cmd(a, buff_ptr, c):
         weechat.prnt('', '  subcommand: {}'.format(args[0]))
         weechat.prnt('', '  args: {}'.format(buff_names))
     if args[0] == 'list':
-        pass
+        for b in owl_state['buff_alerts']:
+            weechat.prnt(buff_name, '{}'.format(b))
+            for rule in owl_state['buff_alerts'][b]:
+                weechat.prnt(buff_name, '  {}'.format(rule))
+                for i in sorted(owl_state['buff_alerts'][b][rule]):
+                    weechat.prnt(buff_name, '    {}'.format(i))
     elif args[0] == 'enable':
         pass
     elif args[0] == 'disable':
