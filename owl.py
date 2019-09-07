@@ -456,14 +456,16 @@ def owl_cmd(a, buff_ptr, c):
                         rule
                     )
                 )
+                nicks = []
                 for i in sorted(owl_state['buff_alerts'][b][rule]):
-                    weechat.prnt(
-                        buff_ptr,
-                        '{}{}'.format(
-                            weechat.prefix('action'),
-                            i
-                        )
+                    nicks.append(i.split('!')[0])
+                weechat.prnt(
+                    buff_ptr,
+                    '{}{}'.format(
+                        weechat.prefix('action'),
+                        ' '.join(nicks)
                     )
+                )
     elif args[0] == 'enable':
         pass
     elif args[0] == 'disable':
