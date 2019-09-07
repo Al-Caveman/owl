@@ -447,20 +447,21 @@ def owl_cmd(a, buff_ptr, c):
         weechat.prnt('', '  subcommand: {}'.format(args[0]))
         weechat.prnt('', '  args: {}'.format(buff_names))
     if args[0] == 'list':
-        for b in owl_state['buff_alerts']:
-            weechat.prnt(buff_ptr, '{}{}'.format(weechat.prefix('action'),b))
-            for rule in owl_state['buff_alerts'][b]:
-                nicks = []
-                for i in sorted(owl_state['buff_alerts'][b][rule]):
-                    nicks.append(i.split('!')[0])
-                weechat.prnt(
-                    buff_ptr,
-                    '{}rule {}:  {}'.format(
-                        weechat.prefix('action'),
-                        rule,
-                        ' '.join(nicks)
+        for b in buff_names:
+            if b in owl_state['buff_alerts']:
+                weechat.prnt(buff_ptr, '{}{}:'.format(weechat.prefix('action'),b))
+                for rule in owl_state['buff_alerts'][b]:
+                    nicks = []
+                    for i in sorted(owl_state['buff_alerts'][b][rule]):
+                        nicks.append(i.split('!')[0])
+                    weechat.prnt(
+                        buff_ptr,
+                        '{}rule {}:  {}'.format(
+                            weechat.prefix('action'),
+                            rule,
+                            ' '.join(nicks)
+                        )
                     )
-                )
     elif args[0] == 'enable':
         pass
     elif args[0] == 'disable':
