@@ -449,8 +449,8 @@ def owl_cmd(a, buff_ptr, c):
     if args[0] == 'list':
         nothing_found = True
         for b in buff_names:
-            nothing_found = False
             if b in owl_state['buff_alerts']:
+                nothing_found = False
                 weechat.prnt(buff_ptr, '{}{}:'.format(weechat.prefix('action'),b))
                 for rule in owl_state['buff_alerts'][b]:
                     nicks = []
