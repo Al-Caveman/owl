@@ -180,13 +180,14 @@ owl_action = {}
 def optimize_configs():
     global owl_default_on
     for rule in range(1, RULES+1):
-        owl_match[rule] = re.compile(owl_settings['rule_{}_match'.format(rule)])
-        owl_action[rule] = {
-            'rule_input_bg_on'  : owl_settings['rule_{}_input_bg_on'.format(rule)],
-            'rule_input_bg_off' : owl_settings['rule_{}_input_bg_off'.format(rule)],
-            'rule_input_fg_on'  : owl_settings['rule_{}_input_fg_on'.format(rule)],
-            'rule_input_fg_off' : owl_settings['rule_{}_input_fg_off'.format(rule)],
-        }
+        if len(owl_settings['rule_{}_match'.format(rule)]):
+            owl_match[rule] = re.compile(owl_settings['rule_{}_match'.format(rule)])
+            owl_action[rule] = {
+                'rule_input_bg_on'  : owl_settings['rule_{}_input_bg_on'.format(rule)],
+                'rule_input_bg_off' : owl_settings['rule_{}_input_bg_off'.format(rule)],
+                'rule_input_fg_on'  : owl_settings['rule_{}_input_fg_on'.format(rule)],
+                'rule_input_fg_off' : owl_settings['rule_{}_input_fg_off'.format(rule)],
+            }
     if owl_settings['channels_default'] == 'on':
         owl_default_on = True
     owl_off_buffers.clear()
