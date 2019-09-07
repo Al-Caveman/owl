@@ -453,7 +453,7 @@ def owl_cmd(a, buff_ptr, c):
                 nothing_found = False
                 weechat.prnt(
                     buff_ptr,
-                    '{}silent dogs in {}:'.format(
+                    '{}owl found these dogs in {}:'.format(
                         weechat.prefix('action'),
                         b
                     )
@@ -475,7 +475,7 @@ def owl_cmd(a, buff_ptr, c):
                 buff_ptr,
                 '{}{}'.format(
                     weechat.prefix('action'),
-                    'no silent dogs in:  {}'.format(' '.join(buff_names))
+                    'owl found no dogs in:  {}'.format(' '.join(buff_names))
                 )
             )
     elif args[0] == 'enable':
