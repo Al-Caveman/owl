@@ -447,7 +447,9 @@ def owl_cmd(a, buff_ptr, c):
         weechat.prnt('', '  subcommand: {}'.format(args[0]))
         weechat.prnt('', '  args: {}'.format(buff_names))
     if args[0] == 'list':
+        nothing_found = True
         for b in buff_names:
+            nothing_found = False
             if b in owl_state['buff_alerts']:
                 weechat.prnt(buff_ptr, '{}{}:'.format(weechat.prefix('action'),b))
                 for rule in owl_state['buff_alerts'][b]:
@@ -462,6 +464,14 @@ def owl_cmd(a, buff_ptr, c):
                             ' '.join(nicks)
                         )
                     )
+        nothing_found:
+            weechat.prnt(
+                buff_ptr,
+                '{}{}'.format(
+                    weechat.prefix('action'),
+                    'no silent dogs in:  {}'.format(' '.join(buff_names))
+                )
+            )
     elif args[0] == 'enable':
         pass
     elif args[0] == 'disable':
