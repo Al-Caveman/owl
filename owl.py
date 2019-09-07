@@ -418,15 +418,33 @@ def owl_init(buff_ptr):
     return weechat.WEECHAT_RC_OK
 
 def owl_cmd(a, buff_ptr, c):
+    # parse args
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
     buff_server = weechat.buffer_get_string(buff_ptr, 'localvar_server')
     buff_channel = weechat.buffer_get_string(buff_ptr, 'localvar_channel')
     args = c.split()
+    buff_names = []
+    if len(args) > 1:
+        for name in args[1:]:
+            m = re.match(r'^(?P<server>(\S+\.)?)(?P<channel>(#\S+)?)$', name)
+            tmp_server = buff_server
+            tmp_channel = buff_channel
+            if m:
+                if len(m.groupdict()['server']):
+                    tmp_server = m.groupdict()['server'][:-1]
+                if len(m.groupdict()['channel']):
+                    tmp_channel = m.groupdict()['channel']
+            tmp_buff_name = '{}.{}'.format(tmp_server, tmp_channel)
+            buff_names.append(tmp_buff_name)
+    else:
+            buff_names.append(buff_name)
+    # do stuff
     if DEBUG:
         weechat.prnt('', 'cmd: {}-{}-{}'.format(a,buff_name,c))
         weechat.prnt('', '  server: {}'.format(buff_server))
         weechat.prnt('', '  channel: {}'.format(buff_channel))
-        weechat.prnt('', '  args: {}'.format(args))
+        weechat.prnt('', '  subcommand: {}'.format(args[0]))
+        weechat.prnt('', '  args: {}'.format(buff_names)
     if args[0] == 'list':
         pass
     elif args[0] == 'enable':
@@ -434,7 +452,7 @@ def owl_cmd(a, buff_ptr, c):
     elif args[0] == 'disable':
         pass
     else:
-        weechat.prnt(buff_ptr, 'owl: unknown argument "{}"'.format(args[0]))
+        weechat.prnt('', 'owl: unknown argument "{}"'.format(args[0]))
     return weechat.WEECHAT_RC_OK
 
 if __name__ == '__main__' and import_ok:
