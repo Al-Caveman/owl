@@ -447,10 +447,10 @@ def owl_cmd(a, buff_ptr, c):
         weechat.prnt('', '  args: {}'.format(buff_names))
     if args[0] == 'list':
         for b in owl_state['buff_alerts']:
-            weechat.prnt(buff_name, '{}{}'.format(weechat.prefix('action'),b))
+            weechat.prnt(buff_ptr, '{}{}'.format(weechat.prefix('action'),b))
             for rule in owl_state['buff_alerts'][b]:
                 weechat.prnt(
-                    buff_name,
+                    buff_ptr,
                     '{}rule: {}'.format(
                         weechat.prefix('action'),
                         rule
@@ -458,7 +458,7 @@ def owl_cmd(a, buff_ptr, c):
                 )
                 for i in sorted(owl_state['buff_alerts'][b][rule]):
                     weechat.prnt(
-                        buff_name,
+                        buff_ptr,
                         '{}{}'.format(
                             weechat.prefix('action'),
                             i
