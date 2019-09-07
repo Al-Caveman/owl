@@ -427,6 +427,14 @@ def owl_cmd(a, buff_ptr, c):
         weechat.prnt('', '  server: {}'.format(buff_server))
         weechat.prnt('', '  channel: {}'.format(buff_channel))
         weechat.prnt('', '  args: {}'.format(args))
+    if args[0] == 'list':
+        pass
+    elif args[0] == 'enable':
+        pass
+    elif args[0] == 'disable':
+        pass
+    else:
+        weechat.prnt(buff_ptr, 'owl: unknown argument "{}"'.format(args[0]))
     return weechat.WEECHAT_RC_OK
 
 if __name__ == '__main__' and import_ok:
