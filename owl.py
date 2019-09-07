@@ -431,11 +431,13 @@ def owl_cmd(a, buff_ptr, c):
             tmp_server = buff_server
             tmp_channel = buff_channel
             if m:
-                if len(m.groupdict()['server']):
-                    tmp_server = m.groupdict()['server']
                 if len(m.groupdict()['channel']):
                     tmp_channel = m.groupdict()['channel']
-                tmp_buff_name = '{}{}'.format(tmp_server, tmp_channel)
+                if len(m.groupdict()['server']):
+                    tmp_server = m.groupdict()['server']
+                    tmp_buff_name = '{}{}'.format(tmp_server, tmp_channel)
+                else:
+                    tmp_buff_name = '{}.{}'.format(tmp_server, tmp_channel)
             buff_names.append(tmp_buff_name)
     else:
             buff_names.append(buff_name)
