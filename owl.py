@@ -57,14 +57,32 @@ SCRIPT_DESC = 'Warns you of silent dogs, such as preying network staffers.'
 
 SCRIPT_COMMAND = 'owl'
 SCRIPT_ARGS_DESC= """
-list [[network.]#channel]   : shows the list of matched nicks in the current
-                              buffer (by default), or in the specified buffer.
+list [[[BUFFER_NAME] BUFFER_NAME] ... BUFFER_NAME]
+    Shows the list of matched nicks in BUFFER_NAME.
 
-enable [[network.]#channel] : enables owl in the current buffer (by default),
-                              or in the specified buffer.
+enable [[[BUFFER_NAME] BUFFER_NAME] ... BUFFER_NAME]
+    Interactively enables owl in BUFFER_NAME.  For permanent settings, assign
+    values to variables in /set owl.
 
-disalbe [[network.]#channel]: enables owl in the current buffer (by default),
-                              or in the specified buffer.
+disalbe [[[BUFFER_NAME] BUFFER_NAME] ... BUFFER_NAME]
+    Interactively disables owl in BUFFER_NAME.  For permanent settings, assign
+    values to variables in /set owl.
+
+BUFFER_NAME
+    [[network.]#channel], e.g. full buffer name, such as "freenode.#weechat",
+    or partial, such as "#weechat" or nothing (i.e. "").
+    
+    If "network." is not specified, it will default to the server name of the
+    buffer where the command "/owl ..." is executed.  E.g. if "/owl enable
+    #weechat" is executed in a buffer falling under the server "freenode", then
+    "/owl enable #weechat" will be equivalent to "/owl enable
+    freenode.#weechat".
+    
+    If nothing is given, at all, and "/owl enable" is typed in the input of he
+    buffer "freenode.#weechat", then "/owl enable" will be equivalent to "/owl
+    enable freenode.#weechat".
+
+For bugs and feature requests: https://github.com/al-caveman/owl/issues
 """
 
 DEBUG = True
@@ -401,8 +419,14 @@ def owl_init(buff_ptr):
 
 def owl_cmd(a, buff_ptr, c):
     buff_name = weechat.buffer_get_string(buff_ptr, 'name')
+    buff_server = weechat.buffer_get_string(buff_ptr, 'localvar_server')
+    buff_channel = weechat.buffer_get_string(buff_ptr, 'localvar_channel')
+    args = c.split()
     if DEBUG:
-        weechat.prnt('', 'cmd in buffer: {}-{}-{}'.format(a,buff_name,c))
+        weechat.prnt('', 'cmd: {}-{}-{}'.format(a,buff_name,c))
+        weechat.prnt('', '  server: {}'.format(buff_server))
+        weechat.prnt('', '  channel: {}'.format(buff_channel))
+        weechat.prnt('', '  args: {}'.format(args))
     return weechat.WEECHAT_RC_OK
 
 if __name__ == '__main__' and import_ok:
