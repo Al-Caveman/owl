@@ -450,20 +450,14 @@ def owl_cmd(a, buff_ptr, c):
         for b in owl_state['buff_alerts']:
             weechat.prnt(buff_ptr, '{}{}'.format(weechat.prefix('action'),b))
             for rule in owl_state['buff_alerts'][b]:
-                weechat.prnt(
-                    buff_ptr,
-                    '{}rule: {}'.format(
-                        weechat.prefix('action'),
-                        rule
-                    )
-                )
                 nicks = []
                 for i in sorted(owl_state['buff_alerts'][b][rule]):
                     nicks.append(i.split('!')[0])
                 weechat.prnt(
                     buff_ptr,
-                    '{}{}'.format(
+                    '{}rule {}:  {}'.format(
                         weechat.prefix('action'),
+                        rule,
                         ' '.join(nicks)
                     )
                 )
