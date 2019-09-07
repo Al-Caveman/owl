@@ -431,21 +431,11 @@ if __name__ == '__main__' and import_ok:
         weechat.hook_command(
             SCRIPT_COMMAND,
             SCRIPT_DESC,
-            '',
-            '',
-            '',
-            'owl_cmd',
-            ''
-        )
-
-        # add command
-        weechat.hook_command(
-            SCRIPT_COMMAND,
-            SCRIPT_DESC,
             '[list] | [enable|disable [server.channel|channel]]',
             SCRIPT_ARGS_DESC,
             'list'
             ' || enable %(filters_names)'
             ' || disable %(filters_names)',
             'owl_cmd',
-            '')
+            ''
+        )
